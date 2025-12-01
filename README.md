@@ -22,7 +22,7 @@ Le script principal est `storyphone.py`
 Chaque dossier dans `Stories/` correspond à un chiffre.
 Les numéros composés construisent progressivement un chemin :
 
-`
+```text
 Stories/
 ├── 1/
 │ ├── description.mp3
@@ -40,7 +40,7 @@ Stories/
 │ ├── description.mp3
 │ ├── ...
 │ └── 120.mp3
-`
+```
 
 ## Exemple
 - Utilisateur tape **123** → le Pi lance :  

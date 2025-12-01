@@ -22,6 +22,7 @@ Le script principal est `storyphone.py`
 Chaque dossier dans `Stories/` correspond à un chiffre.
 Les numéros composés construisent progressivement un chemin :
 
+`
 Stories/
 ├── 1/
 │ ├── description.mp3
@@ -39,7 +40,7 @@ Stories/
 │ ├── description.mp3
 │ ├── ...
 │ └── 120.mp3
-
+`
 
 ## Exemple
 - Utilisateur tape **123** → le Pi lance :  
@@ -75,7 +76,7 @@ Pour créer le contenu :
 ## Cablage du Pi
 
 
-[cadran rotatif crédit revolunet](https://raw.githubusercontent.com/revolunet/s63/master/assets/anim-cadran.gif)
+![cadran rotatif crédit revolunet](https://raw.githubusercontent.com/revolunet/s63/master/assets/anim-cadran.gif)
 
 
 | Fonction / cables du U43                                    | GPIO |
@@ -94,6 +95,7 @@ pip3 install gtts requests
 ```
 
 ## Liens, références
-https://fablab-chalon.fr/wp-content/uploads/2023/02/Projet-Telephone-U43-2022-11.pdf
-http://jacques.reumont.free.fr/Arduino/U43.pdf
-https://github.com/revolunet/s63
+
+- https://fablab-chalon.fr/wp-content/uploads/2023/02/Projet-Telephone-U43-2022-11.pdf
+- http://jacques.reumont.free.fr/Arduino/U43.pdf
+- https://github.com/revolunet/s63

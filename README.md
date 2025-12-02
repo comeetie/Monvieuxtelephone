@@ -2,7 +2,9 @@
 
 Un petit projet perso pour transformer un téléphone filaire ancien (modèle **U43**) en interface audio interactive.
 
-![Un magnifique Téléphone U4](https://upload.wikimedia.org/wikipedia/commons/3/33/T%C3%A9l%C3%A9phone_U43_B.C.I.jpg)
+
+[//]: # (https://upload.wikimedia.org/wikipedia/commons/3/33/T%C3%A9l%C3%A9phone_U43_B.C.I.jpg)
+![Un magnifique Téléphone U4](./U43.png)
 
 L’utilisateur décroche le combiné, compose un numéro, et le système lit des fichiers audio ou exécute des scripts Python selon la structure du répertoire `Stories/`.
 Avec la possibilité de créer des histoires dont vous êtes le héros type "si ... rendez-vous au 53, sinon rendez-vous au 128."

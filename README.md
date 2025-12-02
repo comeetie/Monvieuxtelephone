@@ -5,6 +5,7 @@ Un petit projet perso pour transformer un téléphone filaire ancien (modèle **
 ![Un magnifique Téléphone U4](https://upload.wikimedia.org/wikipedia/commons/3/33/T%C3%A9l%C3%A9phone_U43_B.C.I.jpg)
 
 L’utilisateur décroche le combiné, compose un numéro, et le système lit des fichiers audio ou exécute des scripts Python selon la structure du répertoire `Stories/`.
+Avec la possibilité de créer des histoires dont vous êtes le héros type "si ... rendez-vous au 53, sinon rendez-vous au 128."
 
 Ce projet repose sur :
 - un raspberry Pi Zéro ou Pi Zéro 2
@@ -49,6 +50,9 @@ Stories/
 - Utilisateur tape **43** → le Pi lit :  
   - `Stories/4/3/description.mp3` et garde **43** comme préfix pour les futurs numéros
   - Si l'utilisateur compose ensuite 120  le Pi lit `Stories/4/3/120.mp3`
+  - Ce mode permet de gérer les histoires interactives on place les fichier de l'histoire dans le même répertoire et l'utilisateur n'a pas besoin de retaper l'indicatif du dossier à chaque chapitre.   
+ 
+
 
 ## Autres scripts 
 

@@ -2,10 +2,10 @@
 """
 Script Python pour récupérer les prochains passages d'un arrêt via l'API PRIM / Navitia
 et les annoncer avec gTTS.
-./prochain_passage.py STIF:StopArea:SP:68653: STIF:Line::C01730: # esbly ligne P
-./prochain_passage.py STIF:StopArea:SP:68653: STIF:Line::C02732: # esbly tramway
-./prochain_passage.py STIF:StopArea:SP:68578: # coupvray mairie Bus ne marche pas ...
-./prochain_passage.py STIF:StopArea:SP:68385: STIF:Line::C01742: # RER A 
+./prochain_passage_rt.py STIF:StopArea:SP:68653: STIF:Line::C01730: # esbly ligne P
+./prochain_passage_rt.py STIF:StopArea:SP:68653: STIF:Line::C02732: # esbly tramway
+./prochain_passage_rt.py STIF:StopArea:SP:68578: # coupvray mairie Bus ne marche pas ...
+./prochain_passage_rt.py STIF:StopArea:SP:68385: STIF:Line::C01742: # RER A 
 A regarder aussi https://prim.iledefrance-mobilites.fr/marketplace/disruptions_bulk/disruptions/v2
 
 """
@@ -34,7 +34,6 @@ def get_next_departures(monitoring_ref, line_ref=None):
     }
     if line_ref:    
         params["LineRef"] = line_ref # STIF:Line::C01730:"
-    print(params)
     response = requests.get(url, headers=headers, params=params, timeout=10)
     response.raise_for_status()
     data = response.json()
@@ -57,7 +56,6 @@ def format_departures(data, max_count=3):
     Retourne une phrase du type :
     "Prochains départs d'Esbly : - 14h55 en direction de Gare de l'Est, - 15h32 en direction de Meaux"
     """
-
     try:
         visits = data["Siri"]["ServiceDelivery"]["StopMonitoringDelivery"][0]["MonitoredStopVisit"]
     except (KeyError, IndexError, TypeError):
@@ -94,13 +92,13 @@ def format_departures(data, max_count=3):
             dt = datetime.fromisoformat(raw_time.replace("Z", "+00:00"))
             dt_fr = dt.astimezone(paris_tz)
             heure = dt_fr.strftime("%Hh%M")
-        else:
-            heure = "heure inconnue"
+            entries.append(f"- {heure} en direction de {destination}")
 
-        entries.append(f"- {heure} en direction de {destination}")
+    # suppression doublons evts 
+    entries= list(dict.fromkeys(entries))
 
     # Construction de la phrase finale
-    final_sentence = f"Prochains départs à {stop_name} : " + ", ".join(entries)
+    final_sentence = f"Prochains départs à {stop_name} : " + "; ".join(entries)
     return final_sentence
 
 def main():
@@ -131,7 +129,8 @@ def main():
         speak(msg)
         return
 
-    messages = format_departures(departures)
+    messages = format_departures(departures,max_count=count)
+    print(messages)
     speak(messages)
 
 

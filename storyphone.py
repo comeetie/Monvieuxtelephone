@@ -20,7 +20,6 @@ VOLUME = 20000  # volume pour mpg123 (-f)
 DEBUG = True
 
 prefix = ""
-mpg123_control = None
 
 
 # ===================== DEBUG =====================
@@ -31,6 +30,9 @@ def dbg(*args):
 # ===================== TONALITÉ =====================
 tone_process = None
 audio_playing = False  # True si un son (histoire ou météo) est en cours
+
+# ===================== PLAY / PAUSE =====================
+mpg123_control = None
 
 def start_tone():
     global tone_process

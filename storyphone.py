@@ -96,12 +96,14 @@ def play_audio(path):
     process = subprocess.Popen(["mpg123", "-C","-m", "-f", str(VOLUME), path],stdin=mpg123_control)
     process.wait()
     audio_playing = False
+    mpg123_control = None
     start_tone()
 
 def stop_audio():
     global audio_playing
     dbg("Arrêt audio")
     subprocess.call(["pkill", "mpg123"])
+    mpg123_control = None
     audio_playing = False
 
 
@@ -156,9 +158,10 @@ def resolve_path(num):
 
 # ===================== HISTOIRES =====================
 def play_story(number):
-    if audio_playing and number=="0"
+    if audio_playing and mpg123_control and number=="0" : 
         dbg("Mise en pause")
         os.write(mpg123_control, b's')
+        
     if audio_playing:
         dbg("Lecture en cours, histoire non lancée")
         return

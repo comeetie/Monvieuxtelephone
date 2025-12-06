@@ -5,6 +5,7 @@ import subprocess
 import RPi.GPIO as GPIO
 import threading
 
+
 # ===================== CONSTANTES =====================
 PULSE_TIMEOUT = 0.600
 COMPOSE_TIMEOUT = 2.500
@@ -19,6 +20,8 @@ VOLUME = 20000  # volume pour mpg123 (-f)
 DEBUG = True
 
 prefix = ""
+mpg123_control = None
+
 
 # ===================== DEBUG =====================
 def dbg(*args):
@@ -86,9 +89,11 @@ class Rotary:
 # ===================== AUDIO =====================
 def play_audio(path):
     global audio_playing
+    global mpg123_control
     dbg("Lecture audio :", path)
     audio_playing = True
-    process = subprocess.Popen(["mpg123", "-m", "-f", str(VOLUME), path])
+    mpg123_control, slave = os.openpty()
+    process = subprocess.Popen(["mpg123", "-C","-m", "-f", str(VOLUME), path],stdin=mpg123_control)
     process.wait()
     audio_playing = False
     start_tone()
@@ -151,6 +156,9 @@ def resolve_path(num):
 
 # ===================== HISTOIRES =====================
 def play_story(number):
+    if audio_playing and number=="0"
+        dbg("Mise en pause")
+        os.write(mpg123_control, b's')
     if audio_playing:
         dbg("Lecture en cours, histoire non lancée")
         return

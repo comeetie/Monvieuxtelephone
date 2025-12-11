@@ -29,14 +29,13 @@ def dbg(*args):
 
 # ===================== TONALITÉ =====================
 tone_process = None
-audio_playing = False  # True si un son (histoire ou météo) est en cours
 
 # ===================== PLAY / PAUSE =====================
-mpg123_control = None
-
+audio_process = None
+audio_paused = False
 def start_tone():
     global tone_process
-    if audio_playing or tone_process:
+    if audio_process or tone_process:
         dbg("Lecture en cours, tonalité non lancée")
         return
     tone_process = subprocess.Popen(["mpg123", "-m", "-f", str(VOLUME), "--loop", "-1", TONE_FILE])
@@ -49,6 +48,37 @@ def stop_tone():
         tone_process = None
         dbg("Tonalité stop")
 
+
+# ===================== AUDIO =====================
+def play_audio(path):
+    global audio_process,audio_paused
+    dbg("Lecture audio :", path)
+    audio_paused = False
+    audio_process = subprocess.Popen(["mpg123", "-C","-m", "-f", str(VOLUME), path])
+    audio_process.wait()
+    audio_process.terminate()
+    audio_process = None
+    start_tone()
+
+def stop_audio():
+    global audio_process,audio_paused
+    dbg("Arrêt audio")
+    audio_process.terminate()
+    audio_process = None
+    audio_paused = False
+    
+
+# ===================== PYTHON SCRIPT =====================
+def run_python(path):
+    global audio_process
+    dbg("Run python :", path)
+    audio_process = subprocess.Popen(["python3", path])
+    audio_process.wait()
+    audio_process.terminate()
+    audio_process = None
+    start_tone()
+    
+    
 # ===================== ROTARY =====================
 class Rotary:
     def __init__(self):
@@ -88,36 +118,7 @@ class Rotary:
         self.value = ""
         self.pulse_count = 0
 
-# ===================== AUDIO =====================
-def play_audio(path):
-    global audio_playing
-    global mpg123_control
-    dbg("Lecture audio :", path)
-    audio_playing = True
-    mpg123_control, slave = os.openpty()
-    process = subprocess.Popen(["mpg123", "-C","-m", "-f", str(VOLUME), path],stdin=mpg123_control)
-    process.wait()
-    audio_playing = False
-    mpg123_control = None
-    start_tone()
 
-def stop_audio():
-    global audio_playing
-    dbg("Arrêt audio")
-    subprocess.call(["pkill", "mpg123"])
-    mpg123_control = None
-    audio_playing = False
-
-
-# ===================== PYTHON SCRIPT =====================
-def run_python(path):
-    global audio_playing
-    dbg("Run python :", path)
-    audio_playing = True
-    process = subprocess.Popen(["python3", path])
-    process.wait()
-    audio_playing = False
-    start_tone()
 
 # ===================== PATH =====================
 def resolve_path(num):
@@ -160,11 +161,17 @@ def resolve_path(num):
 
 # ===================== HISTOIRES =====================
 def play_story(number):
-    if audio_playing and mpg123_control and number=="0" : 
-        dbg("Mise en pause")
-        os.write(mpg123_control, b's')
+    if audio_process and number=="0" : 
+        if not audio_paused :
+            dbg("Mise en pause")
+            audio_paused = True
+            audio_process.send_signal(signal.SIGSTOP)
+        else:
+            dbg("Reprise lecture")
+            audio_paused=False
+            audio_process.send_signal(signal.SIGCONT)
         
-    if audio_playing:
+    if audio_process:
         dbg("Lecture en cours, histoire non lancée")
         return
     dbg("Lecture de :"+number)    

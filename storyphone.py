@@ -4,6 +4,7 @@ import os
 import subprocess
 import RPi.GPIO as GPIO
 import threading
+import signal
 
 
 # ===================== CONSTANTES =====================
@@ -56,7 +57,6 @@ def play_audio(path):
     audio_paused = False
     audio_process = subprocess.Popen(["mpg123", "-C","-m", "-f", str(VOLUME), path])
     audio_process.wait()
-    audio_process.terminate()
     audio_process = None
     start_tone()
 
@@ -104,19 +104,21 @@ class Rotary:
         self.pulse_timer.start()
 
     def _pulse_timeout(self):
-        num = (self.pulse_count //2) % 10
-        dbg("Fin chiffre :", num)
-        self.value += str(num)
+        if self.pulse_count>1:
+           num = (self.pulse_count //2) % 10
+           dbg("Fin chiffre :", num)
+           self.value += str(num)
         self.pulse_count = 0
         self.compose_timer = threading.Timer(COMPOSE_TIMEOUT, self._compose_timeout)
         self.compose_timer.start()
 
     def _compose_timeout(self):
         dbg("Fin composition :", self.value)
-        if self.on_composition_end:
-            self.on_composition_end(self.value)
+        val = self.value
         self.value = ""
         self.pulse_count = 0
+        if self.on_composition_end:
+            self.on_composition_end(val)
 
 
 
@@ -161,6 +163,7 @@ def resolve_path(num):
 
 # ===================== HISTOIRES =====================
 def play_story(number):
+    global audio_paused
     if audio_process and number=="0" : 
         if not audio_paused :
             dbg("Mise en pause")
@@ -256,4 +259,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

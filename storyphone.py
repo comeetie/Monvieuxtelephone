@@ -44,10 +44,11 @@ def start_tone():
 
 def stop_tone():
     global tone_process
+    dbg("Tonalité stop")
     if tone_process:
         tone_process.terminate()
-        tone_process = None
-        dbg("Tonalité stop")
+    tone_process = None
+    
 
 
 # ===================== AUDIO =====================
@@ -55,7 +56,7 @@ def play_audio(path):
     global audio_process,audio_paused
     dbg("Lecture audio :", path)
     audio_paused = False
-    audio_process = subprocess.Popen(["mpg123", "-C","-m", "-f", str(VOLUME), path])
+    audio_process = subprocess.Popen(["mpg123", "-m", "-f", str(VOLUME), path])
     audio_process.wait()
     audio_process = None
     start_tone()
@@ -63,7 +64,8 @@ def play_audio(path):
 def stop_audio():
     global audio_process,audio_paused
     dbg("Arrêt audio")
-    audio_process.terminate()
+    if audio_process:
+       audio_process.terminate()
     audio_process = None
     audio_paused = False
     
@@ -74,7 +76,6 @@ def run_python(path):
     dbg("Run python :", path)
     audio_process = subprocess.Popen(["python3", path])
     audio_process.wait()
-    audio_process.terminate()
     audio_process = None
     start_tone()
     
